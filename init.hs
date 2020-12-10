@@ -14,15 +14,13 @@ data Crayon  = Crayon Coordonnee Angle deriving(Show, Read, Eq, Ord)
 color = "red"
 title = "Super SVG max"
 -- Base du fichier SVG
-baseSVG = "<?xml version='1.0' encoding='utf-8'?> \n <svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='500' height='500'> \n <title>"++title++"</title> \n"
+baseSVG = "<?xml version='1.0' encoding='utf-8'?> \n <svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='800' height='800'> \n <title>"++title++"</title> \n"
 
 -- Crayon nul (avec les positions initiales du crayon)
 crayon = Crayon (Coordonnee 100 100) $ toradian 0
 -- Cette fonction permet de retourner un nouveau crayon en fonction des caractériques des instructions 
-newCrayon :: Crayon -> Float -> Angle-> Int-> Crayon
-newCrayon (Crayon coo@(Coordonnee x y) a) dist angle action
- | action == 0 = Crayon (Coordonnee (x + dist*(cos a)) (y + dist*(sin a))) a --  pour avancer
- | action == 1 = Crayon coo (a+angle) -- Pour un left ou right
+newCrayon :: Crayon -> Float -> Angle-> Crayon
+newCrayon (Crayon (Coordonnee x y) a) dist angle = Crayon (Coordonnee (x + dist*(cos (a+angle))) (y + dist*(sin (a+angle)))) (a+angle) --  pour avancer
 
 -- conversion de l'angle en radian 
 toradian :: Float -> Float 
@@ -41,13 +39,13 @@ logo2hask :: String -> Programme
 logo2hask str = read str :: Programme
 
 -- À partir d'un programme, on créé les différentes positions de nos crayons
-toCrayon :: Programme -> Crayon -> [Crayon]
-toCrayon [] c = [c] 
-toCrayon (x:xs) c = case x of
- (Forward v) -> c:toCrayon xs (newCrayon c v (toradian 0) 0)
- (Left a) -> c:toCrayon xs (newCrayon  c 0  (toradian a) 1)
- (Right a) -> c:toCrayon xs (newCrayon c 0 (toradian (-a)) 1)
- (Repeat n prog) ->  c:toCrayon xxs c 
+toCrayon :: Programme -> Crayon -> Angle -> [Crayon]
+toCrayon [] c _ = [c] 
+toCrayon (x:xs) c accangle = case x of
+ (Forward v) -> c:toCrayon xs (newCrayon c v (toradian accangle)) 0
+ (Left a) -> toCrayon xs c (accangle+a) 
+ (Right a) -> toCrayon xs c (accangle-a)
+ (Repeat n prog) ->  c:toCrayon xxs c accangle  
   where xxs = (take (n*length prog)  (cycle prog))++xs
 
 -- À partir de la liste de nos crayons, on design nos lignes SVG
@@ -62,4 +60,4 @@ toSVG' c@(c0:c1:cs)
 -- On récupère l'entrée standart et la sortie standart
 main = do 
   content <- hGetLine stdin
-  hPutStr stdout $ toSVG $ toCrayon (logo2hask content) crayon 
+  hPutStr stdout $ toSVG $ toCrayon (logo2hask content) crayon 0
