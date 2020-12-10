@@ -14,13 +14,14 @@ baseSVG = "<?xml version='1.0' encoding='utf-8'?> \n <svg xmlns='http://www.w3.o
 svgLineEX = "<line x1='100.00' y1='100.00' x2='200.00' y2='100.00' stroke='"++color++"' />"
 
 -- Generation d'une ligne SVG avec des coordonnées
-svgLine :: (Coordonnee a) => a->a->String
-svgLine (Coordonnee x1 y1) (Coordonnee x2 y2) = "<line x1='"x1"' y1='"y1"' x2='"x2"' y2='"y2"' stroke='"++color++"' /> \n"
+svgLine :: Coordonnee -> Coordonnee ->String
+svgLine (Coordonnee x1 y1) (Coordonnee x2 y2) = "<line x1='"++ show x1 ++"' y1='"++ show y1 ++"' x2='"++ show x2 ++"' y2='"++ show y2 ++"' stroke='"++color++"' /> \n"
 
 
-toSVG :: String -> String
-
-decodeInstruction :: String -> [Instruction]
+-- toSVG :: String -> String
 
 
-outputStrLst :: [String] -> IO()
+-- decodeInstruction :: String -> [Instruction]
+-- decodeInstruction  = 
+
+-- outputStrLst :: [String] -> IO()
