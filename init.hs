@@ -15,7 +15,7 @@ svgLineEX = "<line x1='100.00' y1='100.00' x2='200.00' y2='100.00' stroke='"++co
 
 -- Generation d'une ligne SVG avec des coordonnées
 svgLine :: (Coordonnee a) => a->a->String
-svgLine (Coordonnee x1 y1) (Coordonnee x2 y2) = "<line x1='"x1"' y1='"y1"' x2='"x2"' y2='"y2"' stroke='"++color++"' />"
+svgLine (Coordonnee x1 y1) (Coordonnee x2 y2) = "<line x1='"x1"' y1='"y1"' x2='"x2"' y2='"y2"' stroke='"++color++"' /> \n"
 
 
 toSVG :: String -> String
