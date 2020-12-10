@@ -16,11 +16,12 @@ baseSVG = "<?xml version='1.0' encoding='utf-8'?> \n <svg xmlns='http://www.w3.o
 svgLineEX = "<line x1='100.00' y1='100.00' x2='200.00' y2='100.00' stroke='"++color++"' />"
 regexLogoskell ="^\\[.*\\]$"
 svg = ""
-crayon = Crayon (Coordonnee 0 0) 0
+mathis = Crayon (Coordonnee 0 0) 0
 -- Coordonnee ajout distance crayon
-newCrayon :: Crayon -> Float -> Angle-> Crayon
-newCrayon (Crayon (Coordonnee x y) a) dist 0 = Crayon (Coordonnee (x + dist*(cos a)) (y + dist*(sin a))) a --  pour un x vérifier les modulations de pi
-newCrayon (Crayon coo a) 0 angle = Crayon coo (a+angle) -- Pour un left ou right
+newCrayon :: Crayon -> Float -> Angle-> Int-> Crayon
+newCrayon (Crayon coo@(Coordonnee x y) a) dist angle action
+ | action == 0 = Crayon (Coordonnee (x + dist*(cos a)) (y + dist*(sin a))) a --  pour un x vérifier les modulations de pi
+ | action == 1 = Crayon coo (a+angle) -- Pour un left ou right
 
 -- conversion de l'angle en radian 
 
@@ -39,14 +40,28 @@ svgLinecoo (Coordonnee x1 y1) (Coordonnee x2 y2) = "<line x1='"++ show x1 ++"' y
 logo2hask :: String -> Programme
 logo2hask str = read str :: Programme
 
-toSVG :: Programme -> String
-toSVG [] = svg++""
-toSVG (x:xs) = case x of 
- (Forward v) -> (svgLine crayon $ newCrayon crayon v $ toradian 0)++toSVG xs
- (Left a) -> (svgLine crayon $ newCrayon crayon 0 $ toradian a)++toSVG xs
- (Right a) -> (svgLine crayon $ newCrayon crayon 0 $ toradian (-a))++toSVG xs
- (Repeat n prog) -> (toSVGrepeat prog n)++ toSVG xs
+toCrayon :: Programme -> Crayon -> [Crayon]
+toCrayon [] _ = [] 
+toCrayon (x:xs) c = case x of
+ (Forward v) -> c:toCrayon xs (newCrayon c v (toradian 0) 0)
+ (Left a) -> c:toCrayon xs (newCrayon  c 0  (toradian a) 1)
+ (Right a) -> c:toCrayon xs (newCrayon c 0 (toradian (-a)) 1)
+ (Repeat n prog) ->  toCrayonrepeat prog n c ++ toCrayon xs c --doute
 
-toSVGrepeat :: Programme -> Int -> String
-toSVGrepeat _ 0 = ""
-toSVGrepeat prog n = (toSVG prog)++toSVGrepeat prog (n-1)
+
+toCrayonrepeat :: Programme -> Int -> Crayon -> [Crayon]
+toCrayonrepeat _ 0 c = [c] -- doute
+toCrayonrepeat prog n c = (toCrayon prog c) ++ toCrayonrepeat prog (n-1) c
+
+-- toSVG :: Programme -> String
+-- toSVG [] = svg++""
+-- toSVG (x:xs) = case x of 
+--  (Forward v) -> (svgLine crayon $ newCrayon crayon v $ toradian 0)++toSVG xs
+--  (Left a) -> (svgLine crayon $ newCrayon crayon 0 $ toradian a)++toSVG xs
+--  (Right a) -> (svgLine crayon $ newCrayon crayon 0 $ toradian (-a))++toSVG xs
+--  (Repeat n prog) -> (toSVGrepeat prog n)++ toSVG xs
+
+toSVG :: [Crayon] -> String
+toSVG c@(c0:c1:cs)
+ | length c == 2 = svgLine c0 c1 
+ | otherwise = (svgLine c0 c1)++toSVG (c1:cs)
