@@ -45,7 +45,7 @@ toSVG (x:xs) = case x of
  (Forward v) -> (svgLine crayon $ newCrayon crayon v $ toradian 0)++toSVG xs
  (Left a) -> (svgLine crayon $ newCrayon crayon 0 $ toradian a)++toSVG xs
  (Right a) -> (svgLine crayon $ newCrayon crayon 0 $ toradian (-a))++toSVG xs
- (Repeat n prog) -> toSVGrepeat prog n
+ (Repeat n prog) -> (toSVGrepeat prog n)++ toSVG xs
 
 toSVGrepeat :: Programme -> Int -> String
 toSVGrepeat _ 0 = ""
