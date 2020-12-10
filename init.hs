@@ -22,6 +22,10 @@ newCrayon :: Crayon -> Float -> Angle-> Crayon
 newCrayon (Crayon (Coordonnee x y) a) dist 0 = Crayon (Coordonnee (x + dist*(cos a)) (y + dist*(sin a))) a --  pour un x vérifier les modulations de pi
 newCrayon (Crayon coo a) 0 angle = Crayon coo (a+angle) -- Pour un left ou right
 
+-- conversion de l'angle en radian 
+
+toradian :: Float -> Float 
+toradian a = a*pi/180
 -- Generation d'une ligne SVG avec des coordonnées
 
 svgLine :: Crayon -> Crayon ->String
@@ -38,9 +42,9 @@ logo2hask str = read str :: Programme
 toSVG :: Programme -> String
 toSVG [] = svg++""
 toSVG (x:xs) = case x of 
- (Forward v) -> (svgLine crayon $ newCrayon crayon v 0)++toSVG xs
- (Left a) -> (svgLine crayon $ newCrayon crayon 0 a)++toSVG xs
- (Right a) -> (svgLine crayon $ newCrayon crayon 0 (-a))++toSVG xs
+ (Forward v) -> (svgLine crayon $ newCrayon crayon v $ toradian 0)++toSVG xs
+ (Left a) -> (svgLine crayon $ newCrayon crayon 0 $ toradian a)++toSVG xs
+ (Right a) -> (svgLine crayon $ newCrayon crayon 0 $ toradian (-a))++toSVG xs
  (Repeat n prog) -> toSVGrepeat prog n
 
 toSVGrepeat :: Programme -> Int -> String
