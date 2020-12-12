@@ -23,4 +23,9 @@ Pour executer le projet, veuillez rentrer dans votre console la commande suivant
 
 <img src="circle.svg">
 
+### Contribution :
+
+@mathisfchx : Mathis Faucheux  
+@lduf : Lucas Dufour
+
 
