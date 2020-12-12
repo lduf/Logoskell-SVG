@@ -19,6 +19,8 @@ Pour executer le projet, veuillez rentrer dans votre console la commande suivant
 (évidemment, vous pouvez remplacer test.logo par n'importe que fichier logo de votre choix, n'hésitez pas à utiliser ceux présents dans l'archive)  
 ==> Vous n'avez plus qu'à visualiser le resultat en ouvrant le fichier **prog.svg** dans votre navigateur favori !  
   
+  <code> sircle.svg</code>
+
 <img src="/src/circle.svg">
 
 
